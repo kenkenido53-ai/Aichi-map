@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>プロデューサー専用：愛知制覇マップ</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { width: 100%; height: 600px; background: #f0f0f0; }
+        .info-panel { padding: 10px; background: white; border: 2px solid #ffaa00; border-radius: 10px; position: absolute; top: 10px; right: 10px; z-index: 1000; }
+        h2 { margin: 0; color: #ff8800; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+    <div class="info-panel">
+        <h2>愛知県制覇マップ</h2>
+        <p id="city-name">市町村を選択してください</p>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // 1. 地図の初期化（愛知県の中心あたりを表示）
+        const map = L.map('map').setView([35.0, 137.0], 9);
+
+        // 2. 背景の地図（国土地理院の淡色地図）
+        L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>'
+        }).addTo(map);
+
+        // 3. 愛知県の市町村境界データを読み込む（今回はデモ用のURLです）
+        // ※実際にはここに「TopoJSON」や「GeoJSON」というデータを入れます
+        fetch('https://raw.githubusercontent.com/niiyz/JapanCityGeoJson/master/geojson/23_aichi.json')
+            .then(res => res.json())
+            .then(data => {
+                L.geoJson(data, {
+                    style: function(feature) {
+                        // ここで色を決めます！今はテストでランダムな色にしてます
+                        return {
+                            fillColor: '#ffcc00', 
+                            weight: 1,
+                            opacity: 1,
+                            color: 'white',
+                            fillOpacity: 0.6
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        layer.on('click', function() {
+                            // クリックした市町村の名前を表示！
+                            document.getElementById('city-name').innerText = feature.properties.name;
+                            // ここで色を変える処理をあとで追加しましょう！
+                            layer.setStyle({ fillColor: '#ff8800', fillOpacity: 0.9 });
+                        });
+                    }
+                }).addTo(map);
+            });
+    </script>
+</body>
+</html>
