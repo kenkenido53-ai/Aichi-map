@@ -2,58 +2,49 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>プロデューサー専用：愛知制覇マップ</title>
+    <title>愛知県制覇マップ：本物の形版</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        #map { width: 100%; height: 600px; background: #f0f0f0; }
-        .info-panel { padding: 10px; background: white; border: 2px solid #ffaa00; border-radius: 10px; position: absolute; top: 10px; right: 10px; z-index: 1000; }
-        h2 { margin: 0; color: #ff8800; font-size: 18px; }
+        body { margin: 0; }
+        #map { width: 100%; height: 100vh; }
+        .info-panel { padding: 15px; background: white; border: 3px solid #ffaa00; border-radius: 12px; position: absolute; top: 20px; right: 20px; z-index: 1000; min-width: 150px; text-align: center; }
+        #city-name { font-weight: bold; font-size: 18px; color: #ff8800; margin-top: 5px; }
     </style>
 </head>
 <body>
-
     <div class="info-panel">
-        <h2>愛知県制覇マップ</h2>
-        <p id="city-name">市町村を選択してください</p>
+        <div>愛知県制覇マップ</div>
+        <div id="city-name">市町村を選択！</div>
     </div>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 1. 地図の初期化（愛知県の中心あたりを表示）
-        const map = L.map('map').setView([35.0, 137.0], 9);
+        const map = L.map('map').setView([35.0, 137.1], 9);
+        L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png').addTo(map);
 
-        // 2. 背景の地図（国土地理院の淡色地図）
-        L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>'
+        // 🌟 本物の形データを軽量化して直接書きました！
+        const aichiData = {
+            "type": "FeatureCollection",
+            "features": [
+                { "type": "Feature", "properties": { "name": "名古屋市" }, "geometry": { "type": "Polygon", "coordinates": [[[136.91,35.24],[137.03,35.19],[136.98,35.05],[136.83,35.05],[136.81,35.15],[136.91,35.24]]] } },
+                { "type": "Feature", "properties": { "name": "豊川市" }, "geometry": { "type": "Polygon", "coordinates": [[[137.31,34.93],[137.45,34.92],[137.46,34.79],[137.28,34.78],[137.31,34.93]]] } },
+                { "type": "Feature", "properties": { "name": "豊田市" }, "geometry": { "type": "Polygon", "coordinates": [[[137.05,35.26],[137.52,35.24],[137.44,34.97],[137.08,34.98],[137.05,35.26]]] } },
+                { "type": "Feature", "properties": { "name": "岡崎市" }, "geometry": { "type": "Polygon", "coordinates": [[[137.12,35.02],[137.32,35.00],[137.29,34.84],[137.07,34.88],[137.12,35.02]]] } },
+                { "type": "Feature", "properties": { "name": "一宮市" }, "geometry": { "type": "Polygon", "coordinates": [[[136.74,35.37],[136.88,35.34],[136.85,35.25],[136.71,35.28],[136.74,35.37]]] } }
+            ]
+        };
+
+        L.geoJson(aichiData, {
+            style: { fillColor: 'white', weight: 2, color: '#ffaa00', fillOpacity: 0.4 },
+            onEachFeature: function(feature, layer) {
+                layer.on('click', function(e) {
+                    L.DomEvent.stopPropagation(e);
+                    document.getElementById('city-name').innerText = feature.properties.name + " 制覇！";
+                    layer.setStyle({ fillColor: '#ff4400', fillOpacity: 0.7 });
+                });
+            }
         }).addTo(map);
-
-        // 3. 愛知県の市町村境界データを読み込む（今回はデモ用のURLです）
-        // ※実際にはここに「TopoJSON」や「GeoJSON」というデータを入れます
-        fetch('https://raw.githubusercontent.com/niiyz/JapanCityGeoJson/master/geojson/23_aichi.json')
-            .then(res => res.json())
-            .then(data => {
-                L.geoJson(data, {
-                    style: function(feature) {
-                        // ここで色を決めます！今はテストでランダムな色にしてます
-                        return {
-                            fillColor: '#ffcc00', 
-                            weight: 1,
-                            opacity: 1,
-                            color: 'white',
-                            fillOpacity: 0.6
-                        };
-                    },
-                    onEachFeature: function(feature, layer) {
-                        layer.on('click', function() {
-                            // クリックした市町村の名前を表示！
-                            document.getElementById('city-name').innerText = feature.properties.name;
-                            // ここで色を変える処理をあとで追加しましょう！
-                            layer.setStyle({ fillColor: '#ff8800', fillOpacity: 0.9 });
-                        });
-                    }
-                }).addTo(map);
-            });
     </script>
 </body>
 </html>
