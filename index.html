@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>愛知県制覇マップ：本物JSON版</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { margin: 0; }
+        #map { width: 100%; height: 100vh; }
+        .info-panel { padding: 15px; background: white; border: 3px solid #ffaa00; border-radius: 12px; position: absolute; top: 20px; right: 20px; z-index: 1000; min-width: 150px; text-align: center; }
+        #city-name { font-weight: bold; font-size: 18px; color: #ff8800; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="info-panel">
+        <div>愛知県制覇マップ</div>
+        <div id="city-name">市町村を選択！</div>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([35.0, 137.1], 9);
+        L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png').addTo(map);
+
+        // さっき作った aichi.json を読み込みに行きます！
+        fetch('aichi.json')
+            .then(res => {
+                if (!res.ok) throw new Error('JSONが見つかりません！');
+                return res.json();
+            })
+            .then(data => {
+                L.geoJson(data, {
+                    style: { fillColor: 'white', weight: 2, color: '#ffaa00', fillOpacity: 0.4 },
+                    onEachFeature: function(feature, layer) {
+                        layer.on('click', function(e) {
+                            L.DomEvent.stopPropagation(e);
+                            document.getElementById('city-name').innerText = feature.properties.name + " 制覇！";
+                            layer.setStyle({ fillColor: '#ff4400', fillOpacity: 0.7 });
+                        });
+                    }
+                }).addTo(map);
+            })
+            .catch(err => {
+                alert("エラーが発生しました！GitHubのファイル名を確認してくださいっ！");
+                console.error(err);
+            });
+    </script>
+</body>
+</html>
