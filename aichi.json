@@ -1,0 +1,12 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "properties": { "name": "名古屋市" }, "geometry": { "type": "Polygon", "coordinates": [[[136.91,35.24],[136.98,35.24],[137.04,35.18],[136.98,35.05],[136.83,35.05],[136.81,35.15],[136.91,35.24]]] } },
+    { "type": "Feature", "properties": { "name": "豊田市" }, "geometry": { "type": "Polygon", "coordinates": [[[137.04,35.26],[137.25,35.31],[137.52,35.24],[137.44,34.97],[137.08,34.98],[137.04,35.26]]] } },
+    { "type": "Feature", "properties": { "name": "豊橋市" }, "geometry": { "type": "Polygon", "coordinates": [[[137.33,34.81],[137.45,34.81],[137.56,34.75],[137.38,34.64],[137.30,34.71],[137.33,34.81]]] } },
+    { "type": "Feature", "properties": { "name": "岡崎市" }, "geometry": { "type": "Polygon", "coordinates": [[[137.12,35.02],[137.28,34.98],[137.29,34.84],[137.07,34.88],[137.12,35.02]]] } },
+    { "type": "Feature", "properties": { "name": "一宮市" }, "geometry": { "type": "Polygon", "coordinates": [[[136.74,35.37],[136.88,35.34],[136.85,35.25],[136.71,35.28],[136.74,35.37]]] } },
+    { "type": "Feature", "properties": { "name": "春日井市" }, "geometry": { "type": "Polygon", "coordinates": [[[136.94,35.31],[137.11,35.28],[137.10,35.22],[136.95,35.21],[136.94,35.31]]] } },
+    { "type": "Feature", "properties": { "name": "豊川市" }, "geometry": { "type": "Polygon", "coordinates": [[[137.31,34.93],[137.45,34.92],[137.46,34.79],[137.28,34.78],[137.31,34.93]]] } }
+  ]
+}
