@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>愛知県制覇マップ：本物JSON版</title>
+    <title>愛知県制覇マップ：本物データ版</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body { margin: 0; }
@@ -20,30 +20,38 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const map = L.map('map').setView([35.0, 137.1], 9);
+        const map = L.map('map').setView([35.1, 137.0], 9);
         L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png').addTo(map);
 
-        // さっき作った aichi.json を読み込みに行きます！
-        fetch('aichi.json')
-            .then(res => {
-                if (!res.ok) throw new Error('JSONが見つかりません！');
-                return res.json();
-            })
+        // 🌟 外部サイト（niiyzさんのリポジトリ）から本物の愛知県データを直接借りてきます！
+        const aichiUrl = "https://raw.githubusercontent.com/niiyz/JapanCityGeoJson/master/geojson/23_aichi.json";
+
+        fetch(aichiUrl)
+            .then(res => res.json())
             .then(data => {
                 L.geoJson(data, {
-                    style: { fillColor: 'white', weight: 2, color: '#ffaa00', fillOpacity: 0.4 },
+                    style: {
+                        fillColor: 'white',
+                        weight: 1,
+                        color: '#666',
+                        fillOpacity: 0.4
+                    },
                     onEachFeature: function(feature, layer) {
+                        // 外部データの場合、名前が「properties.name」に入っています
                         layer.on('click', function(e) {
                             L.DomEvent.stopPropagation(e);
                             document.getElementById('city-name').innerText = feature.properties.name + " 制覇！";
-                            layer.setStyle({ fillColor: '#ff4400', fillOpacity: 0.7 });
+                            layer.setStyle({
+                                fillColor: '#ff4400',
+                                fillOpacity: 0.8
+                            });
                         });
                     }
                 }).addTo(map);
             })
             .catch(err => {
-                alert("エラーが発生しました！GitHubのファイル名を確認してくださいっ！");
-                console.error(err);
+                console.error("データの読み込みに失敗しました……", err);
+                alert("地図データを読み込めませんでした。ネットがつながっているか確認してくださいっ！");
             });
     </script>
 </body>
